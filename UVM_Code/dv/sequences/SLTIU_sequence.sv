@@ -1,0 +1,34 @@
+class SLTIU_sequence extends uvm_sequence #(base_sequence_item);
+
+	//Registering the env class in the factory
+    `uvm_object_utils(SLTIU_sequence)
+	int loop_count;
+/*******************************************************************************
+/ Constructor : is responsible for the construction of objects and components
+*********************************************************************************/
+function new(string name = "SLTIU_sequence");
+    super.new(name);
+endfunction
+
+/*********************************************************************
+/ Body Task: Create, Randomize & Send the Sequence Item to the driver
+/*********************************************************************/
+task body();
+	cv32e40p_if_sequence_item req;
+  
+    req = cv32e40p_if_sequence_item::type_id::create("req");
+    `uvm_info(get_type_name(), "Running SLTIU_sequence instructions", UVM_LOW)
+
+    repeat(loop_count) begin
+        start_item(req);
+        // ADDI x10, x5, 2035
+        assert(req.randomize() with {instr_type  == I_TYPE;
+		opcode==OPCODE_I ;
+		funct3 == SLTIU_FUNCT3;});
+	
+        finish_item(req);
+end
+endtask
+
+endclass : SLTIU_sequence
+
